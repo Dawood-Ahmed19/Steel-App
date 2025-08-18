@@ -11,22 +11,26 @@ interface InventoryItemsProps {
   id: string;
   name: string;
   type: string;
-  guage: number;
+  gote: number | string;
+  guage: number | string;
   size: number;
   weight: number;
   quantity: number;
   price: number;
+  date: string;
 }
 
 export default function InventoryItem({
   id,
   name,
   type,
+  gote,
   guage,
   size,
   weight,
   quantity,
   price,
+  date,
 }: InventoryItemsProps) {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -49,7 +53,7 @@ export default function InventoryItem({
     >
       <p>{name}</p>
       <p>{type}</p>
-      <p>{guage}</p>
+      <p>{gote ? `Gote: ${gote}` : `Gauge: ${guage}`}</p>
       <p>{size}</p>
       <p>{weight}</p>
       <p>{quantity}</p>
@@ -62,6 +66,7 @@ export default function InventoryItem({
           <FontAwesomeIcon icon={faTrash} />
         </button>
       </div>
+      <p>{new Date(date).toLocaleDateString()}</p>
     </div>
   );
 }

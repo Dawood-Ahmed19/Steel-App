@@ -117,7 +117,7 @@ export default function InventoryCard() {
         >
           <p>Item name</p>
           <p>Item type</p>
-          <p>Gauge</p>
+          <p>Gauge / Gote</p>
           <p>Size</p>
           <p>Weight (KG)</p>
           <p>Quantity Available</p>
@@ -131,11 +131,13 @@ export default function InventoryCard() {
             id={item.id}
             name={item.name}
             type={item.type}
+            gote={item.gote}
             guage={item.guage}
             size={item.size}
             weight={item.weight}
             quantity={item.quantity}
             price={item.price}
+            date={item.date}
           />
         ))}
       </span>

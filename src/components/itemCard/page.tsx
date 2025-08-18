@@ -49,31 +49,24 @@ interface ItemCardProps {
     name: string;
     type: string;
     pipeType: string;
-    guage: number;
+    guage?: number | string;
+    gote?: number | string;
     size: string;
     weight: number;
     price: number;
     quantity: number;
+    height?: number | string;
+    date: string;
   };
   isEdit?: boolean;
-  onSubmit?: (updateData: {
-    id: string;
-    name: string;
-    type: string;
-    pipeType: string;
-    guage: number;
-    size: string;
-    weight: number;
-    price: number;
-    quantity: number;
-  }) => void;
+  onSubmit?: (updateData: any) => void;
 }
 
 export default function ItemCard({ initialData }: ItemCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
-  const [itemType, setItemType] = useState("");
+
   const [formData, setFormData] = useState({
     id: "",
     itemType: "",
@@ -82,26 +75,32 @@ export default function ItemCard({ initialData }: ItemCardProps) {
     itemSize: "",
     weight: "",
     guage: "",
+    gote: "",
     price: "",
     stock: "",
+    height: "",
   });
 
   useEffect(() => {
     if (initialData) {
-      setFormData({
+      setFormData((prev) => ({
+        ...prev,
         id: initialData.id,
-        itemType: initialData.type,
-        pipeType: initialData.pipeType,
-        itemName: initialData.name,
-        itemSize: initialData.size,
-        weight: String(initialData.weight),
-        guage: String(initialData.guage),
-        price: String(initialData.price),
-        stock: String(initialData.quantity),
-      });
-      setItemType(initialData.type);
+        itemType: initialData.type ?? "",
+        pipeType: initialData.pipeType ?? "",
+        itemName: initialData.name ?? "",
+        itemSize: initialData.size ?? "",
+        weight: String(initialData.weight ?? ""),
+        guage: initialData.guage != null ? String(initialData.guage) : "",
+        gote: initialData.gote != null ? String(initialData.gote) : "", // <- read if present
+        price: String(initialData.price ?? ""),
+        stock: String(initialData.quantity ?? ""),
+        height: initialData.height != null ? String(initialData.height) : "",
+      }));
     }
   }, [initialData]);
+
+  const isPillars = formData.itemType === "Pillars";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,12 +109,12 @@ export default function ItemCard({ initialData }: ItemCardProps) {
       !formData.itemName ||
       !formData.itemType ||
       !formData.pipeType ||
-      !formData.guage ||
       !formData.itemSize ||
       !formData.stock ||
-      !formData.price
+      !formData.price ||
+      (isPillars ? !formData.gote : !formData.guage)
     ) {
-      alert("Please fill all fields before submitting.");
+      alert("Please fill all required fields before submitting.");
       return;
     }
 
@@ -126,20 +125,20 @@ export default function ItemCard({ initialData }: ItemCardProps) {
       name: formData.itemName,
       type: formData.itemType,
       pipeType: formData.pipeType,
-      guage: Number(formData.guage),
+      guage: isPillars ? "" : Number(formData.guage || 0),
+      gote: isPillars ? String(formData.gote) : "",
       size: formData.itemSize,
-      weight: Number(formData.weight),
-      price: Number(formData.price),
-      quantity: Number(formData.stock),
+      weight: Number(formData.weight || 0),
+      price: Number(formData.price || 0),
+      quantity: Number(formData.stock || 0),
+      height: isPillars ? formData.height : "",
+      date: new Date().toISOString(),
     };
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((r) => setTimeout(r, 250));
 
-    if (initialData) {
-      dispatch(editItem(newItem));
-    } else {
-      dispatch(addItem(newItem));
-    }
+    if (initialData) dispatch(editItem(newItem));
+    else dispatch(addItem(newItem));
 
     setIsLoading(false);
     router.push("/Inventory");
@@ -150,7 +149,7 @@ export default function ItemCard({ initialData }: ItemCardProps) {
       ? [...GuageOptions, ...GuageAdditionalOptions]
       : GuageOptions;
 
-  const fields = [
+  const fields: any[] = [
     {
       label: "Item Type",
       value: formData.itemType,
@@ -162,6 +161,9 @@ export default function ItemCard({ initialData }: ItemCardProps) {
           itemType: value,
           pipeType: "",
           itemSize: "",
+          guage: "",
+          gote: "",
+          height: "",
         })),
     },
 
@@ -184,6 +186,7 @@ export default function ItemCard({ initialData }: ItemCardProps) {
           },
         ]
       : []),
+
     {
       label: "Item Name",
       value: formData.itemName,
@@ -191,6 +194,7 @@ export default function ItemCard({ initialData }: ItemCardProps) {
       onChange: (value: string) =>
         setFormData((prev) => ({ ...prev, itemName: value })),
     },
+
     {
       label: "Item Size",
       value: formData.itemSize,
@@ -206,14 +210,37 @@ export default function ItemCard({ initialData }: ItemCardProps) {
       onChange: (value: string) =>
         setFormData((prev) => ({ ...prev, itemSize: value })),
     },
-    {
-      label: "Guage",
-      value: formData.guage,
-      type: "select",
-      options: computedGuageOptions,
-      onChange: (value: string) =>
-        setFormData((prev) => ({ ...prev, guage: value })),
-    },
+
+    ...(isPillars
+      ? [
+          {
+            label: "Gote",
+            value: formData.gote,
+            type: "select",
+            options: ["1", "2", "3", "4", "5", "6", "7", "8"],
+            onChange: (value: string) =>
+              setFormData((prev) => ({ ...prev, gote: value })),
+          },
+          {
+            label: "Height (ft)",
+            value: formData.height,
+            placeholder: "Enter pillar height",
+            onChange: (value: string) =>
+              setFormData((prev) => ({ ...prev, height: value })),
+          },
+        ]
+      : [
+          {
+            label: "Guage",
+            value: formData.guage,
+            type: "select",
+            options: computedGuageOptions,
+            onChange: (value: string) =>
+              setFormData((prev) => ({ ...prev, guage: value })),
+            hidden: !formData.itemSize,
+          },
+        ]),
+
     {
       label: "Price Per Kg (PKR)",
       value: formData.price,
@@ -244,9 +271,11 @@ export default function ItemCard({ initialData }: ItemCardProps) {
       </h1>
 
       <div className="grid grid-cols-2 gap-6">
-        {fields.map((field) => (
-          <FormField key={field.label} {...field} />
-        ))}
+        {fields
+          .filter((field) => !(field.hidden === true))
+          .map((field) => (
+            <FormField key={field.label} {...field} />
+          ))}
       </div>
 
       <div className="flex justify-center mt-8">

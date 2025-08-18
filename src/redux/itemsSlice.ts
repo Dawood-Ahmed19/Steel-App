@@ -4,7 +4,8 @@ type Item = {
   id: string;
   name: string;
   type: string;
-  guage: number;
+  guage: number | string;
+  gote: number | string;
   size: string;
   weight: number;
   quantity: number;
