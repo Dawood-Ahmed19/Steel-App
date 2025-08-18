@@ -44,6 +44,10 @@ const RounditemSizeOptions = [
 
 export default function InventoryCard() {
   const items = useSelector((state: RootState) => state.items.list);
+  const [searchItem, setSearchitem] = useState("");
+  const filteredItems = items.filter((item: any) =>
+    item.name.toLowerCase().includes(searchItem.toLowerCase())
+  );
   const [pipeType, setPipeType] = useState("Round");
   const [formData, setFormData] = useState({
     pipeType: "Round",
@@ -98,18 +102,13 @@ export default function InventoryCard() {
   return (
     <div className="max-w-[1530px] w-full bg-cardBg h-full rounded-lg py-[80px] px-[80px] flex flex-col gap-5">
       <span>
-        <FormField placeholder="Search your Item" fontSize="14px" />
-      </span>
-
-      <span className="flex justify-between w-full items-center">
-        <span className="grid grid-cols-3 gap-6">
-          {fields.map((field) => (
-            <FormField key={field.label} {...field} />
-          ))}
-        </span>
-        <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition hover:cursor-pointer">
-          Reset Filters
-        </button>
+        <FormField
+          label="Search your Item"
+          value={searchItem}
+          onChange={(value: string) => setSearchitem(value)}
+          placeholder="Type here"
+          fontSize="14px"
+        />
       </span>
       <span className="max-h-[400px] overflow-y-auto">
         <span
@@ -126,7 +125,7 @@ export default function InventoryCard() {
           <p>Date</p>
         </span>
 
-        {items.map((item: any) => (
+        {filteredItems.map((item: any) => (
           <InventoryItem
             key={item.id}
             id={item.id}
