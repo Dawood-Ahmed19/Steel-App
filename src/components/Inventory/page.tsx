@@ -111,7 +111,7 @@ export default function InventoryCard() {
           Reset Filters
         </button>
       </span>
-      <span>
+      <span className="max-h-[400px] overflow-y-auto">
         <span
           className={`${inventoryGridCols} px-[120px] py-[20px] bg-fieldBg border-b rounded-t-sm border-gray-600 text-white text-sm`}
         >
@@ -125,6 +125,7 @@ export default function InventoryCard() {
           <p>Actions</p>
           <p>Date</p>
         </span>
+
         {items.map((item: any) => (
           <InventoryItem
             key={item.id}
