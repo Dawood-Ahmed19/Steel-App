@@ -194,7 +194,6 @@ export default function ItemCard({ initialData }: ItemCardProps) {
       onChange: (value: string) =>
         setFormData((prev) => ({ ...prev, itemName: value })),
     },
-
     {
       label: "Item Size",
       value: formData.itemSize,
@@ -206,11 +205,12 @@ export default function ItemCard({ initialData }: ItemCardProps) {
             : formData.pipeType === "Square"
             ? [...SquareitemSizeOptions, ...additionalSquareItemSizeOptions]
             : []
-          : RounditemSizeOptions,
+          : formData.pipeType === "Round"
+          ? RounditemSizeOptions
+          : SquareitemSizeOptions,
       onChange: (value: string) =>
         setFormData((prev) => ({ ...prev, itemSize: value })),
     },
-
     ...(isPillars
       ? [
           {
