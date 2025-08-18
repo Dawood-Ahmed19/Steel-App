@@ -5,6 +5,7 @@ import { faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { removeItem } from "@/redux/itemsSlice";
 import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 
 interface InventoryItemsProps {
   id: string;
@@ -12,6 +13,7 @@ interface InventoryItemsProps {
   type: string;
   guage: number;
   size: number;
+  weight: number;
   quantity: number;
   price: number;
 }
@@ -22,10 +24,12 @@ export default function InventoryItem({
   type,
   guage,
   size,
+  weight,
   quantity,
   price,
 }: InventoryItemsProps) {
   const dispatch = useDispatch();
+  const router = useRouter();
   const handleRemoveItem = () => {
     const confirmDelete = window.confirm(
       `Are you sure you want to delete "${name}"?`
@@ -33,6 +37,10 @@ export default function InventoryItem({
     if (confirmDelete) {
       dispatch(removeItem(id));
     }
+  };
+
+  const handleEditItem = () => {
+    router.push(`/Inventory/edit/${id}`);
   };
 
   return (
@@ -43,10 +51,11 @@ export default function InventoryItem({
       <p>{type}</p>
       <p>{guage}</p>
       <p>{size}</p>
+      <p>{weight}</p>
       <p>{quantity}</p>
       <p>{price}</p>
       <div className="flex gap-2">
-        <button>
+        <button onClick={handleEditItem} className="hover:cursor-pointer">
           <FontAwesomeIcon icon={faPen} />
         </button>
         <button onClick={handleRemoveItem} className="hover:cursor-pointer">

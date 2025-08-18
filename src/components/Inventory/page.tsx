@@ -116,12 +116,14 @@ export default function InventoryCard() {
           className={`${inventoryGridCols} px-[120px] py-[20px] bg-fieldBg border-b rounded-t-sm border-gray-600 text-white text-sm`}
         >
           <p>Item name</p>
-          <p>Pipe type</p>
+          <p>Item type</p>
           <p>Gauge</p>
           <p>Size</p>
+          <p>Weight (KG)</p>
           <p>Quantity Available</p>
           <p>Price Per unit (PKR)</p>
           <p>Actions</p>
+          <p>Date</p>
         </span>
         {items.map((item: any) => (
           <InventoryItem
@@ -131,6 +133,7 @@ export default function InventoryCard() {
             type={item.type}
             guage={item.guage}
             size={item.size}
+            weight={item.weight}
             quantity={item.quantity}
             price={item.price}
           />

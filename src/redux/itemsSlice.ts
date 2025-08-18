@@ -6,6 +6,7 @@ type Item = {
   type: string;
   guage: number;
   size: string;
+  weight: number;
   quantity: number;
   price: number;
 };
@@ -25,11 +26,17 @@ const itemsSlice = createSlice({
     addItem: (state, action: PayloadAction<Item>) => {
       state.list.push(action.payload);
     },
+    editItem: (state, action: PayloadAction<Item>) => {
+      const index = state.list.findIndex((i) => i.id === action.payload.id);
+      if (index !== -1) {
+        state.list[index] = action.payload;
+      }
+    },
     removeItem: (state, action: PayloadAction<string>) => {
       state.list = state.list.filter((item) => item.id !== action.payload);
     },
   },
 });
 
-export const { addItem, removeItem } = itemsSlice.actions;
+export const { addItem, editItem, removeItem } = itemsSlice.actions;
 export default itemsSlice.reducer;
