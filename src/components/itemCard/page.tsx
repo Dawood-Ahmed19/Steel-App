@@ -121,7 +121,6 @@ export default function ItemCard({ initialData }: ItemCardProps) {
     setIsLoading(true);
 
     const newItem = {
-      id: formData.id || uuidv4(),
       name: formData.itemName,
       type: formData.itemType,
       pipeType: formData.pipeType,
@@ -135,10 +134,26 @@ export default function ItemCard({ initialData }: ItemCardProps) {
       date: new Date().toISOString(),
     };
 
-    await new Promise((r) => setTimeout(r, 250));
+    try {
+      const res = await fetch("/api/items", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newItem),
+      });
 
-    if (initialData) dispatch(editItem(newItem));
-    else dispatch(addItem(newItem));
+      if (!res.ok) throw new Error("Failed to save item");
+
+      const saved = await res.json();
+
+      if (initialData) {
+        dispatch(editItem(saved));
+      } else {
+        dispatch(addItem(saved));
+      }
+    } catch (err) {
+      console.error("Error saving item:", err);
+      alert("Could not save item. Please try again.");
+    }
 
     setIsLoading(false);
     router.push("/Inventory");

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type Item = {
-  id: string;
+  _id?: string;
   name: string;
   type: string;
   guage: number | string;
@@ -28,13 +28,13 @@ const itemsSlice = createSlice({
       state.list.push(action.payload);
     },
     editItem: (state, action: PayloadAction<Item>) => {
-      const index = state.list.findIndex((i) => i.id === action.payload.id);
+      const index = state.list.findIndex((i) => i._id === action.payload._id);
       if (index !== -1) {
         state.list[index] = action.payload;
       }
     },
     removeItem: (state, action: PayloadAction<string>) => {
-      state.list = state.list.filter((item) => item.id !== action.payload);
+      state.list = state.list.filter((item) => item._id !== action.payload);
     },
   },
 });
