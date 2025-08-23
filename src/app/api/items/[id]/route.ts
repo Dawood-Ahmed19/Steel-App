@@ -1,5 +1,4 @@
 import db from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
@@ -23,31 +22,17 @@ export async function POST(req: Request) {
   }
 }
 
-// export async function GET() {
-//   try {
-//     const items = await db.find({});
-//     return new Response(JSON.stringify({ success: true, items }), {
-//       status: 200,
-//       headers: { "Content-Type": "application/json" },
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     return new Response(
-//       JSON.stringify({ success: false, error: "Failed to fetch" }),
-//       {
-//         status: 500,
-//         headers: { "Content-Type": "application/json" },
-//       }
-//     );
-//   }
-// }
-
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const item = await db.findOne({ _id: params.id });
+    const item = await new Promise((resolve, reject) => {
+      db.findOne({ _id: params.id }, (err: any, doc: any) => {
+        if (err) reject(err);
+        else resolve(doc);
+      });
+    });
 
     if (!item) {
       return new Response(
