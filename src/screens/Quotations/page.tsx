@@ -14,7 +14,7 @@ export default function Quotations() {
   return (
     <div className="flex flex-col items-center w-full h-full justify-center py-[35px] px-[72px] gap-[30px]">
       <span className="flex justify-between w-full">
-        <h1 className="text-xl font-bold text-white">Make your Quotation</h1>
+        <h1 className="text-xl font-bold text-white">Invoice</h1>
         <p className="text-sm text-white">{formattedDate}</p>
       </span>
 

@@ -1,4 +1,32 @@
 import db from "@/lib/db";
+import { NextResponse } from "next/server";
+
+export async function GET(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const item = await db.findOne({ _id: params.id });
+
+    if (!item) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Item not found" }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    return new Response(JSON.stringify({ success: true, item }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    console.error(err);
+    return new Response(
+      JSON.stringify({ success: false, error: "Server error" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
+}
 
 export async function POST(req: Request) {
   try {
@@ -22,62 +50,30 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(
+export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const item = await new Promise((resolve, reject) => {
-      db.findOne({ _id: params.id }, (err: any, doc: any) => {
-        if (err) reject(err);
-        else resolve(doc);
-      });
-    });
+    const numRemoved = await db.remove({ _id: params.id }, {});
 
-    if (!item) {
-      return new Response(
-        JSON.stringify({ success: false, error: "Item not found" }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
+    if (numRemoved === 0) {
+      return NextResponse.json(
+        { success: false, error: "Item not found" },
+        { status: 404 }
       );
     }
 
-    return new Response(JSON.stringify({ success: true, item }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    console.error(err);
-    return new Response(
-      JSON.stringify({ success: false, error: "Server error" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
-  }
-}
-
-export async function DELETE(req: Request) {
-  try {
-    const { id } = await req.json();
-
-    const numRemoved = await db.remove({ _id: id }, {});
-
-    return new Response(
-      JSON.stringify({ success: true, removed: numRemoved }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return NextResponse.json({ success: true, removed: numRemoved });
   } catch (error) {
     console.error(error);
-    return new Response(
-      JSON.stringify({ success: false, error: "Failed to delete" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+    return NextResponse.json(
+      { success: false, error: "Failed to delete" },
+      { status: 500 }
     );
   }
 }
+
 export async function PUT(
   req: Request,
   { params }: { params: { id: string } }

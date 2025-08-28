@@ -13,6 +13,21 @@ const QuotationTable: React.FC = () => {
     Array(16).fill({ qty: "", item: "", weight: "", rate: "", amount: 0 })
   );
 
+  const saveQuotation = async () => {
+    const validRows = rows.filter((r) => r.item && r.qty);
+    try {
+      await fetch("/api/quotations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(validRows),
+      });
+      alert("Quotation saved and inventory updated!");
+    } catch (err) {
+      console.error(err);
+      alert("Error saving quotation");
+    }
+  };
+
   const handleChange = (
     index: number,
     field: keyof QuotationRow,
@@ -38,69 +53,85 @@ const QuotationTable: React.FC = () => {
   const total = rows.reduce((acc, row) => acc + row.amount, 0);
 
   return (
-    <div className="flex justify-center items-center h-full bg-gray-900">
-      <table className="text-white" style={{ width: "600px", height: "800px" }}>
-        <thead>
-          <tr className="bg-gray-800 text-center">
-            <th className="border border-white p-2 w-[60px]">Qty</th>
-            <th className="border border-white p-2 w-[180px]">Item</th>
-            <th className="border border-white p-2 w-[100px]">Weight</th>
-            <th className="border border-white p-2 w-[120px]">Rate</th>
-            <th className="border border-white p-2 w-[140px]">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr key={i} className="text-center">
-              <td className="border border-white">
-                <input
-                  min={0}
-                  type="number"
-                  value={row.qty}
-                  onChange={(e) => handleChange(i, "qty", e.target.value)}
-                  className="bg-transparent text-center w-full outline-none"
-                />
-              </td>
-              <td className="border border-white">
-                <input
-                  min={0}
-                  type="text"
-                  value={row.item}
-                  onChange={(e) => handleChange(i, "item", e.target.value)}
-                  className="bg-transparent text-center w-full outline-none"
-                />
-              </td>
-              <td className="border border-white">
-                <input
-                  min={0}
-                  type="number"
-                  value={row.weight}
-                  onChange={(e) => handleChange(i, "weight", e.target.value)}
-                  className="bg-transparent text-center w-full outline-none"
-                />
-              </td>
-              <td className="border border-white">
-                <input
-                  min={0}
-                  type="number"
-                  value={row.rate}
-                  onChange={(e) => handleChange(i, "rate", e.target.value)}
-                  className="bg-transparent text-center w-full outline-none"
-                />
-              </td>
-              <td className="border border-white">{row.amount || ""}</td>
+    <>
+      <div className="flex justify-center items-center h-full bg-gray-900">
+        <table
+          className="text-white"
+          style={{ width: "600px", height: "800px" }}
+        >
+          <thead>
+            <tr className="bg-gray-800 text-center">
+              <th className="border border-white p-2 w-[60px]">Qty</th>
+              <th className="border border-white p-2 w-[180px]">Item</th>
+              <th className="border border-white p-2 w-[100px]">Weight</th>
+              <th className="border border-white p-2 w-[120px]">Rate</th>
+              <th className="border border-white p-2 w-[140px]">Amount</th>
             </tr>
-          ))}
+          </thead>
+          <tbody>
+            {rows.map((row, i) => (
+              <tr key={i} className="text-center">
+                <td className="border border-white">
+                  <input
+                    min={0}
+                    type="number"
+                    value={row.qty}
+                    onChange={(e) => handleChange(i, "qty", e.target.value)}
+                    className="bg-transparent text-center w-full outline-none"
+                  />
+                </td>
+                <td className="border border-white">
+                  <input
+                    min={0}
+                    type="text"
+                    value={row.item}
+                    onChange={(e) => handleChange(i, "item", e.target.value)}
+                    className="bg-transparent text-center w-full outline-none"
+                  />
+                </td>
+                <td className="border border-white">
+                  <input
+                    min={0}
+                    type="number"
+                    value={row.weight}
+                    onChange={(e) => handleChange(i, "weight", e.target.value)}
+                    className="bg-transparent text-center w-full outline-none"
+                  />
+                </td>
+                <td className="border border-white">
+                  <input
+                    min={0}
+                    type="number"
+                    value={row.rate}
+                    onChange={(e) => handleChange(i, "rate", e.target.value)}
+                    className="bg-transparent text-center w-full outline-none"
+                  />
+                </td>
+                <td className="border border-white">{row.amount || ""}</td>
+              </tr>
+            ))}
 
-          {/* Total row */}
-          <tr className="bg-gray-800 font-bold">
-            <td colSpan={3} className="border border-white text-center"></td>
-            <td className="border border-white text-center">TOTAL</td>
-            <td className="border border-white text-center">{total}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+            {/* Total row */}
+            <tr className="bg-gray-800 font-bold">
+              <td colSpan={3} className="border border-white text-center"></td>
+              <td className="border border-white text-center">TOTAL</td>
+              <td className="border border-white text-center">{total}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <span className="flex items-center gap-4">
+        <button
+          onClick={saveQuotation}
+          className="mt-4 bg-blue-600 px-4 py-2 rounded text-white hover:cursor-pointer"
+        >
+          Save
+        </button>
+        <button className="mt-4 bg-blue-600 px-4 py-2 rounded text-white hover:cursor-pointer">
+          Print
+        </button>
+      </span>
+    </>
   );
 };
 

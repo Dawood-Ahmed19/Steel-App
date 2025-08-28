@@ -47,7 +47,7 @@ export default function InventoryItem({
       <p>{gote ? `Gote: ${gote}` : `Gauge: ${guage}`}</p>
       <p>{size}</p>
       <p>{weight}</p>
-      <p>{quantity}</p>
+      <p>{quantity > 0 ? quantity : "sold"}</p>
       <p>{price}</p>
       <div className="flex gap-2">
         <button onClick={handleEditItem} className="hover:cursor-pointer">

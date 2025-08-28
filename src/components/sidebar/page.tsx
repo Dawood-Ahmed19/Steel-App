@@ -8,7 +8,7 @@ const sideBarItems = [
   { name: "Dashboard", path: "/Dashboard" },
   { name: "Inventory", path: "/Inventory" },
   { name: "Add Item", path: "/addItem" },
-  { name: "Quotation", path: "/Quotation" },
+  { name: "Invoice", path: "/Invoice" },
 ];
 
 export default function Sidebar() {
@@ -17,14 +17,12 @@ export default function Sidebar() {
 
   return (
     <div className="w-64 px-[70px] py-[34px] bg-dashboardBg min-h-screen flex flex-col justify-between">
-      {/* Logo */}
       <div className="flex items-center justify-center">
         <h1 className="text-white text-2xl font-bold">
-          <span className="text-orange-300">Q</span>smith
+          <span className="text-orange-300">Taha</span>Metal
         </h1>
       </div>
 
-      {/* Sidebar items */}
       <div className="relative flex flex-col space-y-1">
         {sideBarItems.map((item, index) => (
           <div

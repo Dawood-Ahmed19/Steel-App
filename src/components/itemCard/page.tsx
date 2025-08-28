@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import FormField from "../FormField/page";
 import { useDispatch } from "react-redux";
 import { addItem, editItem } from "@/redux/itemsSlice";
-import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/navigation";
 
 const GuageOptions = ["1.35", "1.1", "1.0", "0.9", "0.8", "0.7"];

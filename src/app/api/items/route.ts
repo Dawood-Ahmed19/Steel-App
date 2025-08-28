@@ -1,125 +1,68 @@
 import db from "@/lib/db";
+import { Item } from "@/app/types/items";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function GET() {
   try {
-    const body = await req.json();
+    const items = await db.find({});
 
-    const item = await db.insert(body);
-
-    return new Response(JSON.stringify({ success: true, item }), {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error) {
-    console.error(error);
-    return new Response(
-      JSON.stringify({ success: false, error: "Failed to save" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  }
-}
-
-// export async function GET() {
-//   try {
-//     const items = await db.find({});
-//     return new Response(JSON.stringify({ success: true, items }), {
-//       status: 200,
-//       headers: { "Content-Type": "application/json" },
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     return new Response(
-//       JSON.stringify({ success: false, error: "Failed to fetch" }),
-//       {
-//         status: 500,
-//         headers: { "Content-Type": "application/json" },
-//       }
-//     );
-//   }
-// }
-
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const item = await db.findOne({ _id: params.id });
-
-    if (!item) {
-      return new Response(
-        JSON.stringify({ success: false, error: "Item not found" }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    return new Response(JSON.stringify({ success: true, item }), {
+    return new Response(JSON.stringify({ success: true, items }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error("Error fetching items:", error);
     return new Response(
-      JSON.stringify({ success: false, error: "Server error" }),
+      JSON.stringify({ success: false, error: "Failed to fetch items" }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }
 
-export async function DELETE(req: Request) {
-  try {
-    const { id } = await req.json();
+function normalizeItem(item: any) {
+  const name = item.name.trim().toLowerCase();
+  const size = String(item.size ?? "").trim();
+  const guage = String(item.guage ?? "").trim();
 
-    const numRemoved = await db.remove({ _id: id }, {});
-
-    return new Response(
-      JSON.stringify({ success: true, removed: numRemoved }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  } catch (error) {
-    console.error(error);
-    return new Response(
-      JSON.stringify({ success: false, error: "Failed to delete" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  }
+  return {
+    ...item,
+    name,
+    size,
+    guage,
+    uniqueKey: `${name}_${size}_${guage}`,
+  };
 }
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+
+export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const numAffected = await db.update({ _id: params.id }, { $set: body });
+    const normalized = normalizeItem(body);
 
-    if (numAffected === 0) {
-      return new Response(
-        JSON.stringify({ success: false, error: "Item not found" }),
-        { status: 404 }
-      );
-    }
-
-    const updatedDoc = await db.findOne({ _id: params.id });
-
-    return new Response(JSON.stringify({ success: true, item: updatedDoc }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    console.error(err);
-    return new Response(
-      JSON.stringify({ success: false, error: "Server error" }),
-      { status: 500 }
+    const updated = await db.update(
+      { uniqueKey: normalized.uniqueKey },
+      {
+        $set: {
+          name: normalized.name,
+          size: normalized.size,
+          guage: normalized.guage,
+          type: normalized.type,
+          pipeType: normalized.pipeType,
+          weight: normalized.weight,
+          price: normalized.price,
+          height: normalized.height,
+          gote: normalized.gote,
+          date: normalized.date,
+          uniqueKey: normalized.uniqueKey,
+        },
+        $inc: { quantity: Number(normalized.quantity ?? 0) },
+      },
+      { upsert: true, returnUpdatedDocs: true }
     );
+
+    return NextResponse.json(updated, { status: 200 });
+  } catch (err: any) {
+    console.error("Error saving item:", err);
+    return NextResponse.json({ error: "Failed to save item" }, { status: 500 });
   }
 }
