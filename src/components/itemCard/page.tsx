@@ -91,7 +91,7 @@ export default function ItemCard({ initialData }: ItemCardProps) {
         itemSize: initialData.size ?? "",
         weight: String(initialData.weight ?? ""),
         guage: initialData.guage != null ? String(initialData.guage) : "",
-        gote: initialData.gote != null ? String(initialData.gote) : "", // <- read if present
+        gote: initialData.gote != null ? String(initialData.gote) : "",
         price: String(initialData.price ?? ""),
         stock: String(initialData.quantity ?? ""),
         height: initialData.height != null ? String(initialData.height) : "",

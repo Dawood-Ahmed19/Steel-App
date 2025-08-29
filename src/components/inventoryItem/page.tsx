@@ -40,11 +40,12 @@ export default function InventoryItem({
 
   return (
     <div
-      className={`${inventoryGridCols} px-[120px] py-[20px] bg-fieldBg border-b border-gray-800 text-white items-center`}
+      className={`${inventoryGridCols} px-[120px] py-[20px] bg-fieldBg border-b border-gray-800 text-white items-center text-xs`}
     >
       <p>{name}</p>
       <p>{type}</p>
-      <p>{gote ? `Gote: ${gote}` : `Gauge: ${guage}`}</p>
+      <p>{guage}</p>
+      <p>{gote}</p>
       <p>{size}</p>
       <p>{weight}</p>
       <p>{quantity > 0 ? quantity : "sold"}</p>

@@ -11,16 +11,17 @@ export default function Quotations() {
     month: "long",
     day: "numeric",
   });
+
   return (
-    <div className="flex flex-col items-center w-full h-full justify-center py-[35px] px-[72px] gap-[30px]">
-      <span className="flex justify-between w-full">
+    <div className="flex flex-col w-full h-full py-[35px] px-[72px] gap-[35px]">
+      <div className="flex justify-between items-center w-full mb-6">
         <h1 className="text-xl font-bold text-white">Invoice</h1>
         <p className="text-sm text-white">{formattedDate}</p>
-      </span>
+      </div>
 
-      <span>
+      <div className="max-w-4xl mx-auto w-full flex flex-col items-center">
         <QuotationField />
-      </span>
+      </div>
     </div>
   );
 }

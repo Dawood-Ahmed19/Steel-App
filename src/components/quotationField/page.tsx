@@ -10,7 +10,7 @@ type QuotationRow = {
 
 const QuotationTable: React.FC = () => {
   const [rows, setRows] = useState<QuotationRow[]>(
-    Array(16).fill({ qty: "", item: "", weight: "", rate: "", amount: 0 })
+    Array(14).fill({ qty: "", item: "", weight: "", rate: "", amount: 0 })
   );
 
   const saveQuotation = async () => {
@@ -54,10 +54,10 @@ const QuotationTable: React.FC = () => {
 
   return (
     <>
-      <div className="flex justify-center items-center h-full bg-gray-900">
+      <div className="flex justify-center items-center max-w-[600px] max-h-[600px] h-full bg-gray-900 text-xs">
         <table
           className="text-white"
-          style={{ width: "600px", height: "800px" }}
+          style={{ width: "600px", height: "600px" }}
         >
           <thead>
             <tr className="bg-gray-800 text-center">
