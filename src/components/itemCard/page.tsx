@@ -56,6 +56,7 @@ interface ItemCardProps {
     quantity: number;
     height?: number | string;
     date: string;
+    index: number;
   };
   isEdit?: boolean;
   onSubmit?: (updateData: any) => void;
@@ -104,8 +105,28 @@ export default function ItemCard({ initialData }: ItemCardProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    let generatedName = formData.itemName;
+    let nextNumber = 1;
+
+    if (formData.itemType === "Pipe" && !initialData) {
+      try {
+        const resNext = await fetch(
+          `/api/items/count?type=${formData.itemType}`
+        );
+        if (!resNext.ok) throw new Error("Failed to fetch pipe count");
+
+        const { nextNumber: apiNext } = await resNext.json();
+        nextNumber = apiNext;
+
+        generatedName = `p${String(apiNext).padStart(3, "0")}`;
+      } catch (err) {
+        console.error("Error fetching next pipe number:", err);
+        alert("Could not generate Pipe number.");
+        return;
+      }
+    }
+
     if (
-      !formData.itemName ||
       !formData.itemType ||
       !formData.pipeType ||
       !formData.itemSize ||
@@ -117,10 +138,8 @@ export default function ItemCard({ initialData }: ItemCardProps) {
       return;
     }
 
-    setIsLoading(true);
-
     const newItem = {
-      name: formData.itemName,
+      name: generatedName,
       type: formData.itemType,
       pipeType: formData.pipeType,
       guage: isPillars ? "" : Number(formData.guage || 0),
@@ -131,11 +150,14 @@ export default function ItemCard({ initialData }: ItemCardProps) {
       quantity: Number(formData.stock || 0),
       height: isPillars ? formData.height : "",
       date: new Date().toISOString(),
+      index: nextNumber,
     };
+
+    setIsLoading(true);
 
     try {
       const res = await fetch("/api/items", {
-        method: "POST",
+        method: initialData ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newItem),
       });
@@ -149,13 +171,14 @@ export default function ItemCard({ initialData }: ItemCardProps) {
       } else {
         dispatch(addItem(saved));
       }
+
+      router.push("/Inventory");
     } catch (err) {
       console.error("Error saving item:", err);
       alert("Could not save item. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
-    router.push("/Inventory");
   };
 
   const computedGuageOptions =
@@ -201,13 +224,18 @@ export default function ItemCard({ initialData }: ItemCardProps) {
         ]
       : []),
 
-    {
-      label: "Item Name",
-      value: formData.itemName,
-      placeholder: "Item Name here",
-      onChange: (value: string) =>
-        setFormData((prev) => ({ ...prev, itemName: value })),
-    },
+    ...(formData.itemType === "Pipe"
+      ? []
+      : [
+          {
+            label: "Item Name",
+            value: formData.itemName,
+            placeholder: "Enter Item Name",
+            type: "text",
+            onChange: (value: string) =>
+              setFormData((prev) => ({ ...prev, itemName: value })),
+          },
+        ]),
     {
       label: "Item Size",
       value: formData.itemSize,

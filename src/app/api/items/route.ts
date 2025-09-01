@@ -1,5 +1,4 @@
 import db from "@/lib/db";
-import { Item } from "@/app/types/items";
 import { NextResponse } from "next/server";
 
 export async function GET() {

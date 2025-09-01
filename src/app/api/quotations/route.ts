@@ -1,29 +1,43 @@
+import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/db";
-import { NextResponse } from "next/server";
 
-interface InventoryItem {
-  _id: string;
-  name: string;
-  quantity: number;
-  rate?: number;
-}
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { items, discount } = body;
 
-export async function POST(req: Request) {
-  const rows = await req.json();
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return NextResponse.json({ error: "No items provided" }, { status: 400 });
+    }
 
-  for (const row of rows) {
-    const existingItem = (await db.findOne({
-      name: row.item,
-    })) as InventoryItem | null;
+    const quotation = {
+      items,
+      discount: Number(discount) || 0,
+      total: items.reduce(
+        (acc: number, row: any) => acc + (row.amount || 0),
+        0
+      ),
+      date: new Date().toISOString(),
+    };
 
-    if (existingItem) {
-      const newQty = Math.max((existingItem.quantity ?? 0) - row.qty, 0);
+    const savedQuotation = await db.insert(quotation);
+
+    for (const row of items) {
+      if (!row.item || !row.qty) continue;
+
       await db.update(
-        { _id: existingItem._id },
-        { $set: { quantity: newQty } }
+        { name: row.item },
+        { $inc: { quantity: -Number(row.qty) } },
+        { multi: false }
       );
     }
-  }
 
-  return NextResponse.json({ success: true });
+    return NextResponse.json(savedQuotation, { status: 201 });
+  } catch (err) {
+    console.error("Error saving quotation:", err);
+    return NextResponse.json(
+      { error: "Failed to save quotation" },
+      { status: 500 }
+    );
+  }
 }
