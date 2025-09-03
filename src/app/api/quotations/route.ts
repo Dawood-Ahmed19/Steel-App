@@ -1,39 +1,39 @@
-import { NextRequest, NextResponse } from "next/server";
-import db from "@/lib/db";
+import { NextResponse } from "next/server";
+import { quotationDb, inventoryDb } from "@/lib/db";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { items, discount } = body;
+    const { items, discount } = await req.json();
 
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return NextResponse.json({ error: "No items provided" }, { status: 400 });
-    }
-
-    const quotation = {
+    const newQuotation = await quotationDb.insert({
       items,
-      discount: Number(discount) || 0,
-      total: items.reduce(
-        (acc: number, row: any) => acc + (row.amount || 0),
-        0
-      ),
+      discount,
       date: new Date().toISOString(),
-    };
+    });
 
-    const savedQuotation = await db.insert(quotation);
+    for (const soldItem of items) {
+      const { item, qty } = soldItem;
 
-    for (const row of items) {
-      if (!row.item || !row.qty) continue;
+      // Find inventory item by name
+      const inventoryItem: any = await inventoryDb.findOne({ name: item });
 
-      await db.update(
-        { name: row.item },
-        { $inc: { quantity: -Number(row.qty) } },
-        { multi: false }
-      );
+      if (inventoryItem) {
+        const newQty = (inventoryItem.quantity || 0) - Number(qty);
+
+        if (newQty <= 0) {
+          await inventoryDb.remove({ _id: inventoryItem._id }, {});
+        } else {
+          // Update quantity
+          await inventoryDb.update(
+            { _id: inventoryItem._id },
+            { $set: { quantity: newQty } }
+          );
+        }
+      }
     }
 
-    return NextResponse.json(savedQuotation, { status: 201 });
-  } catch (err) {
+    return NextResponse.json({ success: true, quotation: newQuotation });
+  } catch (err: any) {
     console.error("Error saving quotation:", err);
     return NextResponse.json(
       { error: "Failed to save quotation" },

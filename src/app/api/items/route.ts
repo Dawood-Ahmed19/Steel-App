@@ -1,9 +1,9 @@
-import db from "@/lib/db";
+import { inventoryDb } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const items = await db.find({});
+    const items = await inventoryDb.find({});
 
     return new Response(JSON.stringify({ success: true, items }), {
       status: 200,
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
     const normalized = normalizeItem(body);
 
-    const updated = await db.update(
+    const updated = await inventoryDb.update(
       { uniqueKey: normalized.uniqueKey },
       {
         $set: {

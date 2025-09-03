@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import db from "@/lib/db";
+import { inventoryDb } from "@/lib/db";
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const count = await db.count({ type });
+    const count = await inventoryDb.count({ type });
     const nextNumber = count + 1;
 
     return NextResponse.json({ count, nextNumber });

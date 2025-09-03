@@ -1,4 +1,4 @@
-import db from "@/lib/db";
+import { inventoryDb } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -6,7 +6,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const item = await db.findOne({ _id: params.id });
+    const item = await inventoryDb.findOne({ _id: params.id });
 
     if (!item) {
       return new Response(
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const item = await db.insert(body);
+    const item = await inventoryDb.insert(body);
 
     return new Response(JSON.stringify({ success: true, item }), {
       status: 201,
@@ -55,7 +55,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const numRemoved = await db.remove({ _id: params.id }, {});
+    const numRemoved = await inventoryDb.remove({ _id: params.id }, {});
 
     if (numRemoved === 0) {
       return NextResponse.json(
@@ -81,7 +81,10 @@ export async function PUT(
   try {
     const body = await req.json();
 
-    const numAffected = await db.update({ _id: params.id }, { $set: body });
+    const numAffected = await inventoryDb.update(
+      { _id: params.id },
+      { $set: body }
+    );
 
     if (numAffected === 0) {
       return new Response(
@@ -90,7 +93,7 @@ export async function PUT(
       );
     }
 
-    const updatedDoc = await db.findOne({ _id: params.id });
+    const updatedDoc = await inventoryDb.findOne({ _id: params.id });
 
     return new Response(JSON.stringify({ success: true, item: updatedDoc }), {
       status: 200,

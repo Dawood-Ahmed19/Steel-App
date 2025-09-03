@@ -1,31 +1,60 @@
 import React, { useState } from "react";
-
+import { v4 as uuidv4 } from "uuid";
 type QuotationRow = {
   qty: number | "";
   item: string;
   weight: number | "";
   rate: number | "";
   amount: number;
+  uniqueKey: string;
 };
 
-const QuotationTable: React.FC = () => {
+const QuotationTable: React.FC<{ onSaveSuccess?: () => void }> = ({
+  onSaveSuccess,
+}) => {
   const [rows, setRows] = useState<QuotationRow[]>(
-    Array(14).fill({ qty: "", item: "", weight: "", rate: "", amount: 0 })
+    Array.from({ length: 14 }, () => ({
+      qty: "",
+      item: "",
+      weight: "",
+      rate: "",
+      amount: 0,
+      uniqueKey: uuidv4(),
+    }))
   );
   const [discount, setDiscount] = useState<number>(0);
 
   const saveQuotation = async () => {
     const validRows = rows.filter((r) => r.item && r.qty);
+
+    if (validRows.length === 0) {
+      alert("Please add at least one item before saving.");
+      return;
+    }
+
     try {
-      await fetch("/api/quotations", {
+      const res = await fetch("/api/quotations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items: validRows, discount }),
       });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.error || "Failed to save quotation");
+      }
+
       alert("Quotation saved and inventory updated!");
     } catch (err) {
-      console.error(err);
+      console.error("Error in saveQuotation:", err);
       alert("Error saving quotation");
+    }
+
+    if (onSaveSuccess) {
+      onSaveSuccess();
+    } else {
+      window.location.reload();
     }
   };
 

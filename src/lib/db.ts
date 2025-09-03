@@ -1,8 +1,13 @@
 import Datastore from "nedb-promises";
 
-const db = Datastore.create({
-  filename: "items.db",
+const inventoryDb = Datastore.create({
+  filename: "inventory.db",
   autoload: true,
 });
 
-export default db;
+const quotationDb = Datastore.create({
+  filename: "quotations.db",
+  autoload: true,
+});
+
+export { inventoryDb, quotationDb };

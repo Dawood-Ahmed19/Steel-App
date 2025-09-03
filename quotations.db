@@ -1,0 +1,8 @@
+{"type":"quotation","items":[{"qty":2,"item":"p001","weight":2,"rate":2,"amount":4,"uniqueKey":"8557f301-53e8-4478-a442-89a232b94423"}],"discount":0,"total":4,"date":{"$$date":1756910579412},"_id":"21ayYgqyp62Xnrx4"}
+{"type":"quotation","items":[{"qty":2,"item":"p001","weight":2,"rate":2,"amount":4,"uniqueKey":"4dce4fc8-64d4-43c4-a27a-912ff721c4de"}],"discount":0,"total":4,"date":{"$$date":1756913673649},"_id":"2tskHBNphbxhP6VS"}
+{"type":"quotation","items":[{"qty":25,"weight":25,"rate":25,"amount":625}],"discount":0,"total":0,"date":{"$$date":1756825315668},"_id":"7FACNrSUZRX6kKff"}
+{"type":"quotation","items":[{"qty":2,"item":"p001","weight":2,"rate":2,"amount":4,"uniqueKey":"85ed21af-d3a2-4071-9cce-10dbe7a741e6"}],"discount":0,"total":0,"date":{"$$date":1756825753167},"_id":"JklWnv5yeUySZO1X"}
+{"type":"quotation","items":[{"qty":2,"weight":2,"rate":2,"amount":4}],"discount":0,"total":0,"date":{"$$date":1756824996346},"_id":"MrNJfngsNybK6mYy"}
+{"type":"quotation","items":[{"qty":2,"item":"P001","weight":2,"rate":2,"amount":4,"uniqueKey":"3bb7d5f0-3056-4ba2-9b8e-7f65a70467be"}],"discount":0,"total":4,"date":{"$$date":1756909640851},"_id":"ddd01rwVMqDPsYUD"}
+{"type":"quotation","items":[{"qty":2,"item":"p002","weight":2,"rate":2,"amount":4,"uniqueKey":"63485f9d-8a6e-4db5-bd5d-9fa0c70f0a6e"}],"discount":0,"total":4,"date":{"$$date":1756913736573},"_id":"h1uY8A00T8zW8TEx"}
+{"items":[{"qty":5,"item":"p001","weight":5,"rate":5,"amount":25,"uniqueKey":"84e4cd3c-1893-499c-8214-1aa90ca0b768"}],"discount":0,"date":"2025-09-03T15:45:46.122Z","_id":"sEqMOLraS9LsWjxt"}

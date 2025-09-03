@@ -48,15 +48,13 @@ export default function InventoryItem({
       <p>{gote}</p>
       <p>{size}</p>
       <p>{weight}</p>
-      <p>{quantity > 0 ? quantity : "sold"}</p>
+      <p>{quantity}</p>
       <p>{price}</p>
       <div className="flex gap-2">
         <button
           onClick={handleEditItem}
-          disabled={quantity === 0} // ✅ fixed
-          className={`hover:cursor-pointer ${
-            quantity === 0 ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          disabled={quantity === 0}
+          className="hover:cursor-pointer"
         >
           <FontAwesomeIcon icon={faPen} />
         </button>

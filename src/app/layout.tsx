@@ -2,8 +2,6 @@
 
 import Sidebar from "@/components/sidebar/page";
 import "./globals.css";
-import { Provider } from "react-redux";
-import { store } from "@/redux/store";
 
 export default function RootLayout({
   children,
@@ -15,9 +13,7 @@ export default function RootLayout({
       <body className="bg-BgColor font-poppins">
         <div className="flex">
           <Sidebar />
-          <main className="flex-1">
-            <Provider store={store}>{children}</Provider>
-          </main>
+          <main className="flex-1">{children}</main>
         </div>
       </body>
     </html>

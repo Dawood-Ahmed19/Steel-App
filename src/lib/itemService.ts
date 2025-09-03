@@ -1,4 +1,4 @@
-import db from "./db";
+import { inventoryDb } from "./db";
 
 export type Item = {
   name: string;
@@ -8,13 +8,13 @@ export type Item = {
 };
 
 export async function addItem(item: Item) {
-  return await db.insert(item);
+  return await inventoryDb.insert(item);
 }
 
 export async function getItems() {
-  return await db.find({}).sort({ date: -1 });
+  return await inventoryDb.find({}).sort({ date: -1 });
 }
 
 export async function deleteItem(id: string) {
-  return await db.remove({ _id: id }, {});
+  return await inventoryDb.remove({ _id: id }, {});
 }

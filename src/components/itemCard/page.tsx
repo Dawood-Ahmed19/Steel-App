@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import FormField from "../FormField/page";
 import { useDispatch } from "react-redux";
-import { addItem, editItem } from "@/redux/itemsSlice";
 import { useRouter } from "next/navigation";
 
 const GuageOptions = ["1.35", "1.1", "1.0", "0.9", "0.8", "0.7"];
@@ -65,7 +64,6 @@ interface ItemCardProps {
 export default function ItemCard({ initialData }: ItemCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
     id: "",
@@ -108,6 +106,7 @@ export default function ItemCard({ initialData }: ItemCardProps) {
     let generatedName = formData.itemName;
     let nextNumber = 1;
 
+    // Auto-generate pipe name if new Pipe
     if (formData.itemType === "Pipe" && !initialData) {
       try {
         const resNext = await fetch(
@@ -126,6 +125,7 @@ export default function ItemCard({ initialData }: ItemCardProps) {
       }
     }
 
+    // Validate required fields
     if (
       !formData.itemType ||
       !formData.pipeType ||
@@ -164,13 +164,7 @@ export default function ItemCard({ initialData }: ItemCardProps) {
 
       if (!res.ok) throw new Error("Failed to save item");
 
-      const saved = await res.json();
-
-      if (initialData) {
-        dispatch(editItem(saved));
-      } else {
-        dispatch(addItem(saved));
-      }
+      alert("Item saved successfully ✅");
 
       router.push("/Inventory");
     } catch (err) {
